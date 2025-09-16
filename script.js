@@ -1,8 +1,8 @@
 // Usuarios de prueba
 const USERS = [
   { user: "cliente", pass: "1234", saldo: 1000 },
-  { user: "juan", pass: "abcd", saldo: 500 },
-  { user: "maria", pass: "qwerty", saldo: 2000 }
+  { user: "Exequiel", pass: "asdf", saldo: 500 },
+  { user: "Gonzalo", pass: "4321", saldo: 2000 }
 ];
 
 let currentUser = null;
@@ -124,6 +124,7 @@ window.depositar = depositar;
 window.retirar = retirar;
 window.transferir = transferir;
 window.logout = logout;
+
 
 
 
