@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BANCO VUO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>BANCO VUO</h1>
+    
+    <!-- Login -->
+    <div id="loginSection">
+      <h2>Iniciar Sesión</h2>
+      <input type="text" id="username" placeholder="Usuario">
+      <input type="password" id="password" placeholder="Contraseña">
+      <button onclick="login()">Ingresar</button>
+    </div>
+
+    <!-- Panel Bancario -->
+    <div id="bankSection" class="hidden">
+      <h2>Bienvenido, <span id="userDisplay"></span></h2>
+      <p>Saldo actual: $<span id="saldo">0</span></p>
+
+      <div class="operations">
+        <h3>Operaciones</h3>
+        <input type="number" id="monto" placeholder="Ingrese monto">
+        <button onclick="depositar()">Depositar</button>
+        <button onclick="retirar()">Retirar</button>
+      </div>
+
+      <div class="transfer">
+        <h3>Transferencia</h3>
+        <select id="destino">
+          <!-- Se cargan usuarios automáticamente -->
+        </select>
+        <input type="number" id="montoTransfer" placeholder="Monto a transferir">
+        <button onclick="transferir()">Transferir</button>
+      </div>
+
+      <div class="history">
+        <h3>Historial de Movimientos</h3>
+        <ul id="historial"></ul>
+      </div>
+
+      <button class="logout" onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
