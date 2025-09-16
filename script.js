@@ -59,9 +59,11 @@
   }
 
   // Exponer las funciones a window para que los onclick en el HTML las encuentren
-  window.login = login;
-  window.depositar = depositar;
-  window.retirar = retirar;
-  window.logout = logout;
+window.login = login;
+window.depositar = depositar;
+window.retirar = retirar;
+window.logout = logout;
+
 })();
+
 
