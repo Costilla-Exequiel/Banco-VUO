@@ -1,69 +1,130 @@
-(function () {
-  const USER = "cliente";
-  const PASS = "1234";
-  let saldo = 0;
+// Usuarios de prueba
+const USERS = [
+  { user: "cliente", pass: "1234", saldo: 1000 },
+  { user: "juan", pass: "abcd", saldo: 500 },
+  { user: "maria", pass: "qwerty", saldo: 2000 }
+];
 
-  function actualizarSaldo() {
-    const s = document.getElementById("saldo");
-    if (s) s.innerText = saldo;
+let currentUser = null;
+
+// --- Función de Login ---
+function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  const user = USERS.find(u => u.user === username && u.pass === password);
+
+  if (user) {
+    currentUser = user;
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("bankSection").classList.remove("hidden");
+    document.getElementById("userDisplay").innerText = currentUser.user;
+    document.getElementById("saldo").innerText = currentUser.saldo;
+    cargarDestinos();
+  } else {
+    alert("Usuario o contraseña incorrectos");
   }
+}
 
-  function login() {
-    const user = document.getElementById("username")?.value ?? "";
-    const pass = document.getElementById("password")?.value ?? "";
-    const errorEl = document.getElementById("login-error");
-
-    if (user === USER && pass === PASS) {
-      document.getElementById("login-section").classList.add("hidden");
-      document.getElementById("bank-section").classList.remove("hidden");
-      const welcome = document.getElementById("welcome");
-      if (welcome) welcome.innerText = `Hola, ${user}!`;
-      if (errorEl) errorEl.innerText = "";
-      actualizarSaldo();
-    } else {
-      if (errorEl) errorEl.innerText = "Usuario o contraseña incorrectos";
-    }
-  }
-
-  function depositar() {
-    const input = document.getElementById("deposito");
-    const monto = parseFloat(input?.value || "0");
-    if (isNaN(monto) || monto <= 0) {
-      alert("Ingrese un monto válido");
-      return;
-    }
-    saldo += monto;
+// --- Depositar ---
+function depositar() {
+  const monto = parseFloat(document.getElementById("monto").value);
+  if (monto > 0) {
+    currentUser.saldo += monto;
     actualizarSaldo();
-    if (input) input.value = "";
+    agregarHistorial(`Depósito de $${monto}`);
+    document.getElementById("monto").value = "";
+  } else {
+    alert("Ingrese un monto válido");
   }
+}
 
-  function retirar() {
-    const input = document.getElementById("retiro");
-    const monto = parseFloat(input?.value || "0");
-    if (isNaN(monto) || monto <= 0) {
-      alert("Ingrese un monto válido");
-      return;
-    }
-    if (monto > saldo) {
-      alert("Fondos insuficientes");
-      return;
-    }
-    saldo -= monto;
+// --- Retirar ---
+function retirar() {
+  const monto = parseFloat(document.getElementById("monto").value);
+  if (monto > 0 && monto <= currentUser.saldo) {
+    currentUser.saldo -= monto;
     actualizarSaldo();
-    if (input) input.value = "";
+    agregarHistorial(`Retiro de $${monto}`);
+    document.getElementById("monto").value = "";
+  } else {
+    alert("Monto inválido o saldo insuficiente");
+  }
+}
+
+// --- Transferir ---
+function transferir() {
+  const destino = document.getElementById("destino").value;
+  const monto = parseFloat(document.getElementById("montoTransfer").value);
+
+  if (!destino || isNaN(monto) || monto <= 0) {
+    alert("Seleccione un destino válido e ingrese un monto");
+    return;
   }
 
-  function logout() {
-    document.getElementById("bank-section").classList.add("hidden");
-    document.getElementById("login-section").classList.remove("hidden");
+  if (monto > currentUser.saldo) {
+    alert("Saldo insuficiente para transferir");
+    return;
   }
 
-  // Exponer las funciones a window para que los onclick en el HTML las encuentren
+  // Restar al usuario actual
+  currentUser.saldo -= monto;
+
+  // Sumar al usuario destino
+  const userDestino = USERS.find(u => u.user === destino);
+  if (userDestino) {
+    userDestino.saldo += monto;
+  }
+
+  actualizarSaldo();
+  agregarHistorial(`Transferencia de $${monto} a ${destino}`);
+  document.getElementById("montoTransfer").value = "";
+}
+
+// --- Actualizar Saldo ---
+function actualizarSaldo() {
+  document.getElementById("saldo").innerText = currentUser.saldo;
+}
+
+// --- Historial ---
+function agregarHistorial(movimiento) {
+  const li = document.createElement("li");
+  li.innerText = movimiento;
+  document.getElementById("historial").appendChild(li);
+}
+
+// --- Cargar usuarios para transferir ---
+function cargarDestinos() {
+  const select = document.getElementById("destino");
+  select.innerHTML = "";
+
+  USERS.forEach(u => {
+    if (u.user !== currentUser.user) {
+      const option = document.createElement("option");
+      option.value = u.user;
+      option.innerText = u.user;
+      select.appendChild(option);
+    }
+  });
+}
+
+// --- Logout ---
+function logout() {
+  currentUser = null;
+  document.getElementById("bankSection").classList.add("hidden");
+  document.getElementById("loginSection").classList.remove("hidden");
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("historial").innerHTML = "";
+}
+
+// Exponer funciones al HTML
 window.login = login;
 window.depositar = depositar;
 window.retirar = retirar;
+window.transferir = transferir;
 window.logout = logout;
 
-})();
+
 
 
